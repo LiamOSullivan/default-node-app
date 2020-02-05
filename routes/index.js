@@ -6,4 +6,8 @@ router.get('/', function (req, res, next) {
   res.render('index', { title: 'BCD JS Tools' })
 })
 
+router.get('/statbank', function (req, res, next) {
+  res.render('statbank', { title: 'Statbank Tool' })
+})
+
 module.exports = router
