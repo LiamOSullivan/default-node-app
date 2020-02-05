@@ -6,10 +6,20 @@ const STATBANK_BASE_URL =
         'https://statbank.cso.ie/StatbankServices/StatbankServices.svc/jsonservice/responseinstance/'
 // need to start with an array of objects with table codes
 // as Statbank doesn't have a discoverable list
-fetch('../data/statbank_table_codes.json')
+fetch('../data/statbank_table_metadata.json')
     .then(response => response.json())
     .then(tableCodes => {
       console.log('No of tables:\n')
       console.log(tableCodes.length)
+      populateDropdown('table-code-dropdown', tableCodes)
     })
 
+const populateDropdown = (id, optionsContent) => {
+  let dd = document.getElementById(id)
+  optionsContent.forEach((optionContent, i) => {
+    let o = document.createElement('option')
+    o.textContent = optionContent.tablecode
+    o.value = optionContent.tablecode
+    dd.appendChild(o)
+  })
+}
