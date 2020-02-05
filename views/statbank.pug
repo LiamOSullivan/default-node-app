@@ -2,6 +2,15 @@ extends layout
 
 block content
   h1 Statbank Tool
+  select#select-table-code
+    option Choose a Statbank table code
+    option Choose 2
+    //- 
+    //- .col-md-8
+    //-   #statbank-loading.mt-2 
+    //- .col-md-12
+    //-   #statbank-test-text.mt-2
+    //-   #statbank-test-datalist.mt-2
   
 block append scripts
-  script(src='/javascripts/statbank.js')
+  script(src='/javascripts/statbank.js' type='module')
