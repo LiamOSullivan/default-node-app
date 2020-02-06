@@ -1,32 +1,64 @@
-import { fetchJsonFromUrl } from './utils/bcd-async.mjs'
+import { fetchJsonFromUrlAsync } from './utils/bcd-async.mjs'
+import { forEachAsync } from './utils/bcd-async.mjs'
 import { getTableMetadata } from './utils/bcd-statbank.mjs'
 import { populateDropdownFromArray } from './utils/bcd-ui.mjs'
-import JSONstat from 'https://unpkg.com/jsonstat-toolkit@1.0.8/import.mjs'
+
 (async () => {
   console.log('Statbank Tool')
   const STATBANK_BASE_URL =
           'https://statbank.cso.ie/StatbankServices/StatbankServices.svc/jsonservice/responseinstance/'
+  const tableCodesArrayURI = '../data/statbank_tablecodes.json'
 
-  const tableMetadata = '../data/statbank_table_metadata.json'
-  // fetch metadata for Statbank tables
-  let metadata = await fetchJsonFromUrl(tableMetadata)
-  const tableCodes = metadata.map((d) => {
+  // fetch tableCodes for Statbank tables
+  const tableCodes = await fetchJsonFromUrlAsync(tableCodesArrayURI)
+  const tableCodesArray = tableCodes.map((d) => {
     return d.tablecode
   })
-  let dropdown = document.getElementById('table-code-dropdown')
 
-  populateDropdownFromArray(dropdown, tableCodes)
+  const allMetadata = []
+
+  const getButton = document.getElementById('get-all-metadata')
+
+  getButton.addEventListener('click', async () => {
+    console.log('Loading all metadata... \n')
+
+    const start = async () => {
+      await forEachAsync(tableCodesArray, async (tableCode) => {
+        const tableJson = await fetchJsonFromUrlAsync(STATBANK_BASE_URL + tableCode)
+        allMetadata.push(getTableMetadata(tableJson))
+        console.log(allMetadata.length)
+      })
+      console.log('Done')
+      console.log(allMetadata)
+    }
+    start()
+    // tableCodesArray.forEach(async (tableCode) => {
+    //   const tableJson = await fetchJsonFromUrl(STATBANK_BASE_URL + tableCode)
+    //   allMetadata.push(getTableMetadata(tableJson))
+    //   console.log(allMetadata.length)
+    // })
+    // let el = document.getElementById('statbank-loading')
+    // el.textContent = 'Fetching data from statbank.cso.ie'
+    // let elProgress = document.createElement('progress')
+    // elProgress.setAttribute('max', '100')
+    // elProgress.setAttribute('value', '50')
+    // el.appendChild(elProgress)
+  })
+
+  const dropdown = document.getElementById('table-code-dropdown')
+
+  populateDropdownFromArray(dropdown, tableCodesArray)
 
   dropdown.addEventListener('change', async (e) => {
     const tableCode = e.target.value
     console.log(`Loading ${tableCode}... \n`)
-          // let el = document.getElementById('statbank-loading')
-          // el.textContent = 'Fetching data from statbank.cso.ie'
-          // let elProgress = document.createElement('progress')
-          // elProgress.setAttribute('max', '100')
-          // elProgress.setAttribute('value', '50')
-          // el.appendChild(elProgress)
-    let tableJson = await fetchJsonFromUrl(STATBANK_BASE_URL + tableCode)
+    // let el = document.getElementById('statbank-loading')
+    // el.textContent = 'Fetching data from statbank.cso.ie'
+    // let elProgress = document.createElement('progress')
+    // elProgress.setAttribute('max', '100')
+    // elProgress.setAttribute('value', '50')
+    // el.appendChild(elProgress)
+    const tableJson = await fetchJsonFromUrl(STATBANK_BASE_URL + tableCode)
     console.log(getTableMetadata(tableJson))
   })
 
@@ -56,7 +88,7 @@ import JSONstat from 'https://unpkg.com/jsonstat-toolkit@1.0.8/import.mjs'
   // console.log(waitTable)
 })()
 
-// let resource = fetchResource(tableMetadata)
+// let resource = fetchResource(tabletableCodes)
 // console.log(resource.length)
 
 // import JSONstat from 'https://unpkg.com/jsonstat-toolkit@1.0.8/import.mjs'
@@ -69,17 +101,17 @@ import JSONstat from 'https://unpkg.com/jsonstat-toolkit@1.0.8/import.mjs'
 //         'https://statbank.cso.ie/StatbankServices/StatbankServices.svc/jsonservice/responseinstance/'
 // // need to start with an array of objects with table codes
 // // as Statbank doesn't have a discoverable list
-// fetch('../data/statbank_table_metadata.json')
+// fetch('../data/statbank_table_tableCodes.json')
 //     .then(response => response.json())
-//     .then(metadata => {
+//     .then(tableCodes => {
 //       console.log('No of tables:\n')
-//       console.log(metadata.length)
-//       let tableCodes = metadata.map((d) => {
+//       console.log(tableCodes.length)
+//       let tableCodesArray = tableCodes.map((d) => {
 //         return d.tablecode
 //       })
 //
 //       let dropdown = document.getElementById('table-code-dropdown')
-//       populateDropdownFromArray(dropdown, tableCodes)
+//       populateDropdownFromArray(dropdown, tableCodesArray)
 //
 //       // dropdown.addEventListener('change', (e) => {
 //       // // console.log('select \n')
