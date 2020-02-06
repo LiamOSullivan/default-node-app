@@ -12,11 +12,11 @@ let getTableMetadata = (tableJson) => {
   const length = jsonStat.Dataset(0).value.length
   const dimensions = jsonStat.Dataset(0).id // Dimensions
   return {
-    'label': label,
-    'source': source,
-    'update': update,
-    'valueslength': length,
-    'dimensions':dimensions
+    label: label,
+    source: source,
+    update: update,
+    valueslength: length,
+    dimensions: dimensions
   }
 }
 
