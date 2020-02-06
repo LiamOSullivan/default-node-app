@@ -10,4 +10,8 @@ router.get('/statbank', function (req, res, next) {
   res.render('statbank', { title: 'Statbank Tool' })
 })
 
+router.get('/simple', function (req, res, next) {
+  res.render('simple', { title: 'Simples' })
+})
+
 module.exports = router

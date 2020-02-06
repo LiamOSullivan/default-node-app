@@ -1,3 +1,5 @@
+import { fetchJsonFromUrl } from './utils/bcd-async.mjs'
+import { getTableMetadata } from './utils/bcd-statbank.mjs'
 import { populateDropdownFromArray } from './utils/bcd-ui.mjs'
 import JSONstat from 'https://unpkg.com/jsonstat-toolkit@1.0.8/import.mjs'
 (async () => {
@@ -7,32 +9,51 @@ import JSONstat from 'https://unpkg.com/jsonstat-toolkit@1.0.8/import.mjs'
 
   const tableMetadata = '../data/statbank_table_metadata.json'
   // fetch metadata for Statbank tables
-  const res = await fetch(tableMetadata)
-  const json = await res.json()
-  const tableCodes = json.map((d) => {
+  let metadata = await fetchJsonFromUrl(tableMetadata)
+  const tableCodes = metadata.map((d) => {
     return d.tablecode
   })
   let dropdown = document.getElementById('table-code-dropdown')
+
   populateDropdownFromArray(dropdown, tableCodes)
+
   dropdown.addEventListener('change', async (e) => {
-    console.log('select \n')
     const tableCode = e.target.value
-  //       //   // let el = document.getElementById('statbank-loading')
+    console.log(`Loading ${tableCode}... \n`)
+          // let el = document.getElementById('statbank-loading')
+          // el.textContent = 'Fetching data from statbank.cso.ie'
+          // let elProgress = document.createElement('progress')
+          // elProgress.setAttribute('max', '100')
+          // elProgress.setAttribute('value', '50')
+          // el.appendChild(elProgress)
+    let tableJson = await fetchJsonFromUrl(STATBANK_BASE_URL + tableCode)
+    console.log(getTableMetadata(tableJson))
+  })
+
+  // console.log('Got table')
+  // console.log(table)
+
+  // let fetchAsync = async () => {
+  //   let tableO = await dropdown.addEventListener('change', async (e) => {
+  //     console.log('select \n')
+  //     const tableCode = e.target.value
+  // //       //   // let el = document.getElementById('statbank-loading')
   //       //   // el.textContent = 'Fetching data from statbank.cso.ie'
   //       //   // let elProgress = document.createElement('progress')
   //       //   // elProgress.setAttribute('max', '100')
   //       //   // elProgress.setAttribute('value', '50')
   //       //   // el.appendChild(elProgress)
-    let table = await fetchStatbankTableFromUrl(STATBANK_BASE_URL + tableCode)
-    console.log('Got table')
-    console.log(table)
-  })
+  //     let table1 = await fetchStatbankTableFromUrl(STATBANK_BASE_URL + tableCode)
+  //     console.log('Got table')
+  //     console.log(table1)
+  //     return table1
+  //   })
+  //   return tableO
+  // }
 
-  let fetchStatbankTableFromUrl = async (url) => {
-    const res = await fetch(url)
-    const json = await res.json()
-    return json
-  }
+  // const waitTable = await fetchAsync()
+  // console.log('waitTable')
+  // console.log(waitTable)
 })()
 
 // let resource = fetchResource(tableMetadata)

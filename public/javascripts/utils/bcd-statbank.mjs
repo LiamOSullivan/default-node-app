@@ -1,22 +1,28 @@
 import JSONstat from 'https://unpkg.com/jsonstat-toolkit@1.0.8/import.mjs'
 import { datalist } from 'https://unpkg.com/jsonstat-utils@2.5.5/export.mjs'
 
-let fetchStatbankTableFromUrl = async (url) => {
-  const res = await fetch(url)
-  const json = await res.json()
-  // let el = document.getElementById('statbank-loading')
-  // el.textContent = ''
-  // // el.removeChild(el.childNodes[0])
+let getTableMetadata = (tableJson) => {
   // /***
   // JSON-stat Javascript Toolkit (JJK)
   // ***/
-  const stat = JSONstat(JSON.parse(JSON.stringify(json))) // clone
-  console.log(stat.Dataset(0).value.length)
-  console.log(stat.Dataset(0).source)
-  console.log(stat.Dataset(0).updated)
-  console.log(`columns: ${stat.Dataset(0).id}`) // Dimensions
-  console.log(stat.Dataset(0))
+  const jsonStat = JSONstat(tableJson) // clone
+  const label = jsonStat.Dataset(0).label
+  const source = jsonStat.Dataset(0).source
+  const update = jsonStat.Dataset(0).updated
+  const length = jsonStat.Dataset(0).value.length
+  const dimensions = jsonStat.Dataset(0).id // Dimensions
+  return {
+    'label': label,
+    'source': source,
+    'update': update,
+    'valueslength': length,
+    'dimensions':dimensions
+  }
+}
 
+export { getTableMetadata }
+
+// JSONstat(JSON.parse(JSON.stringify(tableJson))) // clone
   // const label = stat.Dataset(0).Dimension(0).Category('IE21').label
   // console.log(label)
 
@@ -71,6 +77,4 @@ let fetchStatbankTableFromUrl = async (url) => {
   // })
 
   // document.getElementById('statbank-test-datalist').innerHTML = dataListHtml
-}
-
-export { fetchStatbankTableFromUrl }
+// }
