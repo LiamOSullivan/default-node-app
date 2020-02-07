@@ -1,16 +1,19 @@
 import JSONstat from 'https://unpkg.com/jsonstat-toolkit@1.0.8/import.mjs'
 import { datalist } from 'https://unpkg.com/jsonstat-utils@2.5.5/export.mjs'
 
+
 const getTableMetadata = (tableJson) => {
   // /***
   // JSON-stat Javascript Toolkit (JJK)
   // ***/
-  const jsonStat = JSONstat(tableJson) // clone
+  const jsonStat = JSONstat(tableJson)
   const label = jsonStat.Dataset(0).label
   const source = jsonStat.Dataset(0).source
   const update = jsonStat.Dataset(0).updated
   const length = jsonStat.Dataset(0).value.length
   const dimensions = jsonStat.Dataset(0).id // Dimensions
+  const roles = jsonStat.Dataset(0).role
+  const geoRole = hasGeoRole(tableJson) || false
   // let categories = dimensions.forEach((dim)=>{
   //
   // })
@@ -25,15 +28,26 @@ const getTableMetadata = (tableJson) => {
     source: source,
     update: update,
     valueslength: length,
-    dimensions: dimensions
+    dimensions: dimensions,
+    roles: roles,
+    geo: geoRole
     // categories: categories
   }
 }
 
 export { getTableMetadata }
 
+/* checks for geo role that would allow for regional filtering */
+const hasGeoRole = (tableJson) => {
+  const jsonStat = JSONstat(tableJson)
+  const geoRole = jsonStat.Dataset(0).role.geo ? jsonStat.Dataset(0).role.geo[0] : false
+  return geoRole
+}
+
+export { hasGeoRole }
+
 const filterForDublin = () => {
-  let filtered = []
+  const filtered = []
 
   return filtered
 }
